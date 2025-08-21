@@ -36,8 +36,15 @@ Você deverá criar um aplicativo Flutter chamado "Swiss Army Knife" que contenh
 
 ## Entrega
 - Data limite: **05/09/2025** (entregas após essa data não serão aceitas)
-- Submeta o projeto em um repositório Git (GitHub, GitLab, etc) com README.md e prints/vídeos de funcionamento.
-- O repositório deve conter o código-fonte, ATIVIDADE.md, README.md e instruções de build/exportação.
+- Cada aluno deve criar um repositório próprio no GitHub para o projeto.
+- O repositório deve conter todo o código-fonte, ATIVIDADE.md, README.md e instruções de build/exportação.
+- É obrigatório criar uma release no GitHub (menu "Releases" do repositório) para a entrega final.
+- Na release, faça upload dos seguintes arquivos:
+   - Versão Web exportada (pasta build/web compactada em .zip)
+   - Versão Android exportada (.apk gerado pelo Flutter)
+- O README.md deve conter instruções claras de como rodar o app localmente e como realizar o build/exportação para Web e Android.
+- Após criar a release e fazer o upload dos arquivos, entregue o link do repositório (com a release publicada) na tarefa do Google Classroom.
+- Não serão aceitos arquivos enviados diretamente no Classroom, apenas o link do repositório com release e builds anexados.
 
 ## Critérios de Avaliação
 - Cumprimento dos requisitos obrigatórios
