@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'interactive_widgets_demo.dart';
 
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 void main() {
   runApp(const FlutterDemoApp());
 }
@@ -48,6 +51,7 @@ class HomePage extends StatelessWidget {
             _DemoTile(title: 'Navegação', page: NavigationDemoPage()),
             _DemoTile(title: 'Outros Widgets', page: OtherWidgetsDemoPage()),
             _DemoTile(title: 'Widgets Interativos', page: InteractiveWidgetsDemoPage()),
+            _DemoTile(title: 'API Chuck Norris', page: ChuckNorrisApiDemoPage()),
           ],
         ),
       ),
@@ -86,6 +90,8 @@ class _DemoTile extends StatelessWidget {
 
 // Páginas de demonstração (só estrutura, conteúdo virá nas próximas iterações)
 class TextDemoPage extends StatelessWidget {
+  const TextDemoPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -123,6 +129,8 @@ class TextDemoPage extends StatelessWidget {
 }
 
 class ButtonDemoPage extends StatelessWidget {
+  const ButtonDemoPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -157,8 +165,8 @@ class ButtonDemoPage extends StatelessWidget {
               children: [
                 FloatingActionButton(
                   onPressed: () {},
-                  child: const Icon(Icons.add),
                   tooltip: 'FloatingActionButton',
+                  child: const Icon(Icons.add),
                 ),
                 const SizedBox(width: 16),
                 ElevatedButton.icon(
@@ -176,6 +184,8 @@ class ButtonDemoPage extends StatelessWidget {
 }
 
 class ImageDemoPage extends StatelessWidget {
+  const ImageDemoPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -214,6 +224,8 @@ class ImageDemoPage extends StatelessWidget {
 }
 
 class FormDemoPage extends StatelessWidget {
+  const FormDemoPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -227,6 +239,8 @@ class FormDemoPage extends StatelessWidget {
 }
 
 class FormDemoWidget extends StatefulWidget {
+  const FormDemoWidget({super.key});
+
   @override
   State<FormDemoWidget> createState() => _FormDemoWidgetState();
 }
@@ -288,7 +302,7 @@ class ListDemoPage extends StatelessWidget {
             return const Text('ListView é usado para listas roláveis.');
           }
           return ListTile(
-            leading: CircleAvatar(child: Text('${index}')),
+            leading: CircleAvatar(child: Text('$index')),
             title: Text(items[index - 1]),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
           );
@@ -299,6 +313,8 @@ class ListDemoPage extends StatelessWidget {
 }
 
 class LayoutDemoPage extends StatelessWidget {
+  const LayoutDemoPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -356,6 +372,8 @@ class LayoutDemoPage extends StatelessWidget {
 }
 
 class NavigationDemoPage extends StatelessWidget {
+  const NavigationDemoPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -408,6 +426,8 @@ class PaginaExemplo extends StatelessWidget {
 }
 
 class NavigationBarDemo extends StatefulWidget {
+  const NavigationBarDemo({super.key});
+
   @override
   State<NavigationBarDemo> createState() => _NavigationBarDemoState();
 }
@@ -438,6 +458,8 @@ class _NavigationBarDemoState extends State<NavigationBarDemo> {
 }
 
 class OtherWidgetsDemoPage extends StatelessWidget {
+  const OtherWidgetsDemoPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -490,6 +512,112 @@ class OtherWidgetsDemoPage extends StatelessWidget {
             child: const Text('Mostrar AlertDialog'),
           ),
         ],
+      ),
+    );
+  }
+}
+
+
+// Demonstração de chamada de API e tratamento de resposta
+class ChuckNorrisApiDemoPage extends StatefulWidget {
+  const ChuckNorrisApiDemoPage({super.key});
+
+  @override
+  State<ChuckNorrisApiDemoPage> createState() => _ChuckNorrisApiDemoPageState();
+}
+
+class _ChuckNorrisApiDemoPageState extends State<ChuckNorrisApiDemoPage> {
+  Map<String, dynamic>? _rawData;
+  bool _loading = false;
+  String? _error;
+
+  Future<void> _fetchJoke() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final response = await http.get(Uri.parse('https://api.chucknorris.io/jokes/random'));
+      if (response.statusCode == 200) {
+        setState(() {
+          _rawData = json.decode(response.body);
+        });
+      } else {
+        setState(() {
+          _error = 'Erro: ${response.statusCode}';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = 'Erro: $e';
+      });
+    } finally {
+      setState(() {
+        _loading = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchJoke();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Demonstração: API Chuck Norris')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ElevatedButton(
+              onPressed: _loading ? null : _fetchJoke,
+              child: Text(_loading ? 'Carregando...' : 'Buscar nova piada'),
+            ),
+            const SizedBox(height: 16),
+            if (_error != null)
+              Text(_error!, style: const TextStyle(color: Colors.red)),
+            if (_rawData != null) ...[
+              const Text('JSON cru recebido da API:', style: TextStyle(fontWeight: FontWeight.bold)),
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.all(8),
+                color: Colors.black12,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Text(
+                    const JsonEncoder.withIndent('  ').convert(_rawData),
+                    style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
+                  ),
+                ),
+              ),
+              const Divider(),
+              const Text('Dados tratados em tabela:', style: TextStyle(fontWeight: FontWeight.bold)),
+              Table(
+                border: TableBorder.all(color: Colors.black26),
+                columnWidths: const {
+                  0: IntrinsicColumnWidth(),
+                  1: FlexColumnWidth(),
+                },
+                children: [
+                  ..._rawData!.entries.map((e) => TableRow(children: [
+                    Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Text(e.key, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Text(e.value.toString()),
+                    ),
+                  ])),
+                ],
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
