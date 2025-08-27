@@ -19,7 +19,6 @@ Você deverá criar um aplicativo Flutter chamado "Pokedex Temática" que atenda
 - O código deve ser organizado, comentado e separado em arquivos/pastas por funcionalidade.
 - O app deve ser exportado e testado para Web e Android (forneça prints ou vídeos de ambos funcionando).
 - O README.md deve conter instruções claras de execução, build e exportação para Web e Android.
-- Não é permitido usar reconhecimento por câmera ou upload de imagens para busca.
 - A busca deve ser textual, com sugestões dinâmicas conforme o usuário digita.
 - Utilize pelo menos 2 widgets personalizados criados por você.
 - O app deve ser entregue com o código-fonte completo e pronto para build.
